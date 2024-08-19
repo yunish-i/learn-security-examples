@@ -1,14 +1,21 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+import express, { Request, Response } from 'express';
+import bodyParser from 'body-parser';
 
 const app = express();
 const port = 3000;
 
+// Define a TypeScript interface for a User
+interface User {
+  id: number;
+  username: string;
+  role: string;
+}
+
 // Simulated database of users with different roles
-const users = [
+const users: User[] = [
   { id: 1, username: 'admin', role: 'admin' },
   { id: 2, username: 'user1', role: 'user' },
-  { id: 3, username: 'user2', role: 'user' }
+  { id: 3, username: 'user2', role: 'user' },
 ];
 
 // Middleware for parsing URL-encoded form data
@@ -18,9 +25,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Route to update user role (VULNERABLE TO PRIVILEGE ESCALATION)
-app.post('/update-role', (req, res) => {
+app.post('/update-role', (req: Request, res: Response) => {
   const { userId, newRole } = req.body;
-  console.log(userId, newRole);
+
   // Simulated authentication (insecure)
   const user = users.find(u => u.id === Number(userId));
   if (!user) {
@@ -38,7 +45,7 @@ app.post('/update-role', (req, res) => {
 });
 
 // Route to serve the HTML form
-app.get('/send-form', (req, res) => {
+app.get('/send-form', (req: Request, res: Response) => {
   // Serve the HTML form located in the 'public' directory
   res.sendFile(__dirname + '/userForm.html');
 });
