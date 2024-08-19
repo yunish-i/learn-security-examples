@@ -1,11 +1,18 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const fs = require('fs');
+import express, { Request, Response, NextFunction } from 'express';
+import bodyParser from 'body-parser';
+import fs from 'fs';
+import path from 'path';
 
 const app = express();
 const port = 3000;
 
-let messages = [];
+// Define a TypeScript interface for the message object
+interface Message {
+    message: string;
+    user: string;
+}
+
+let messages: Message[] = [];
 const logStream = fs.createWriteStream('server.log', { flags: 'a' });
 
 // Middleware for parsing URL-encoded form data
@@ -15,14 +22,14 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 // Middleware for logging requests
-app.use((req, res, next) => {
+app.use((req: Request, res: Response, next: NextFunction) => {
     const logEntry = `[${new Date().toISOString()}] ${req.method} ${req.url} - ${req.ip}`;
     logStream.write(logEntry + '\n');
     next();
 });
 
 // Route to send a message (requires authentication)
-app.post('/send-message', (req, res) => {
+app.post('/send-message', (req: Request, res: Response) => {
     const { message, user } = req.body;
 
     if (!message || !user) {
@@ -38,7 +45,7 @@ app.post('/send-message', (req, res) => {
 });
 
 // Route to retrieve messages (requires authentication)
-app.get('/get-messages', (req, res) => {
+app.get('/get-messages', (req: Request, res: Response) => {
     // Implement user authentication mechanism here (e.g., token validation)
 
     // Simulate user authentication for demonstration purposes
@@ -56,13 +63,13 @@ app.get('/get-messages', (req, res) => {
 });
 
 // Route to serve the HTML form
-app.get('/send-message-form', (req, res) => {
-  // Serve the HTML form located in the 'public' directory
-  res.sendFile(__dirname + '/sendMessage.html');
+app.get('/send-message-form', (req: Request, res: Response) => {
+    // Serve the HTML form located in the 'public' directory
+    res.sendFile(path.join(__dirname, 'sendMessage.html'));
 });
 
 // Error handling middleware
-app.use((err, req, res, next) => {
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
     const logEntry = `[${new Date().toISOString()}] Error: ${err.message}`;
     logStream.write(logEntry + '\n');
