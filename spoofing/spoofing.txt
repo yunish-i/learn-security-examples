@@ -1,1 +1,0 @@
-Briefly explain the vulnerability and why the secure version prevents the vulnerability.

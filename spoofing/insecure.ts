@@ -1,9 +1,15 @@
 import express, { Request, Response } from "express";
-import session, { SessionData } from "express-session";
+import session from "express-session";
 
 const app = express();
 
-// Extend the SessionData interface to include custom session properties
+/** 
+ * Extend the SessionData interface 
+ * to include custom session properties.
+ * This is an example of module augmentation in TypeScript 
+ * to extend the express-session module with custom properties 
+ * Read more at https://www.typescriptlang.org/docs/handbook/declaration-merging.html#module-augmentation 
+ * **/
 declare module 'express-session' {
   interface SessionData {
     user?: string;
@@ -11,8 +17,10 @@ declare module 'express-session' {
   }
 }
 
+// middleware to parse incoming requests
 app.use(express.urlencoded({ extended: false }));
 
+// middleware to create a session
 app.use(
   session({
     secret: "SOMESECRET",
@@ -22,6 +30,11 @@ app.use(
   })
 );
 
+/**
+ * This POST endpoints is used to perform a sensitive operation
+ * if the user is an admin.
+ * otherwise, it will return an error message with "Unauthorized Access"
+ */
 app.post("/sensitive", (req: Request, res: Response) => {
   if (req.session.user === 'Admin') {
     req.session.sensitive = 'supersecret';
@@ -31,6 +44,11 @@ app.post("/sensitive", (req: Request, res: Response) => {
   }
 });
 
+/**
+ * This GET endpoint is used
+ * to set the user session if session is not set
+ * it also sends a form to the user to input their name
+ */
 app.get("/", (req: Request, res: Response) => {
   let name = "Guest";
 
@@ -48,11 +66,19 @@ app.get("/", (req: Request, res: Response) => {
   `);
 });
 
+/**
+ * This POST endpoint is used to redirect 
+ * users after they have submitted their name
+ * in the form.
+ */
 app.post("/register", (req: Request, res: Response) => {
   req.session.user = req.body.name.trim();
   res.send(`<p>Thank you</p> <a href="/">Back home</a>`);
 });
 
+/**
+ * This POST endpoint is used to destroy an existing session
+ */
 app.post("/forget", (req: Request, res: Response) => {
   req.session.destroy(err => {
     res.redirect("/");
