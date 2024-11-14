@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import session, { SessionData } from "express-session";
+import session from "express-session";
 
 const app = express();
 
