@@ -1,3 +1,0 @@
-Briefly explain the vulnerability and why the secure version prevents the vulnerability.
-Which CIA property does tampering violate?
-What additional security mechanisms can you incorporate?

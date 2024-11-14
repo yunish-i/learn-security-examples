@@ -26,19 +26,19 @@ const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);
 
 // Route to authenticate user (SECURE AGAINST NOSQL INJECTION)
 app.get('/userinfo', async (req: Request, res: Response) => {
+  // Extract username from query parameters
+  // shorthand for const username = req.query.username;
   const { username } = req.query;
 
   // Input validation: Ensure username is a string
-  // if (typeof username !== 'string') {
-  //   return res.status(400).send('Invalid username format');
-  // }
-
-  
+  if (typeof username !== 'string') {
+    return res.status(400).send('Invalid username format');
+  }
 
   // Perform database query using sanitized username
   try {
     // Sanitize username input: Prevent NoSQL injection
-    const sanitizedUsername = (username as string).replace(/[^\w\s]/gi, ''); // Remove non-alphanumeric characters
+    const sanitizedUsername = username.replace(/[^\w\s]/gi, ''); // Remove non-alphanumeric characters
     const user = await User.findOne({ username: sanitizedUsername }).exec();
 
     if (user) {
