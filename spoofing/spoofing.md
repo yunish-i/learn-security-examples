@@ -1,5 +1,7 @@
 # Spoofing
 
+This example demonstrates spoofind through two ways -- Stealing cookies programmatically and cross site request forgery (CSRF).
+
 ## Steps to reproduce the vulnerability
 
 1. Install dependencies
@@ -29,5 +31,4 @@
 
 1. Briefly explain the spoofing vulnerability in **insecure.ts**.
 2. Briefly explain different ways in which vulnerability can be exploited.
-3. Birefly explain why **secure.ts** does not have the spoofing vulnerability in **insecure.ts**.
-4. Which CIA properties do you think Spoofing violates?
+3. Briefly explain why **secure.ts** does not have the spoofing vulnerability in **insecure.ts**.

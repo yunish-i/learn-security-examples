@@ -1,5 +1,7 @@
 # Tampering
 
+This example demonstrates tampering through script injection.
+
 ## Steps to reproduce
 
 1. Install all dependencies
