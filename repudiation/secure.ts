@@ -6,6 +6,8 @@ import path from 'path';
 const app = express();
 const port = 3000;
 
+const getCurrentDateTime = () => new Date().toLocaleString('en-US', { timeZone: 'America/New_York' });
+
 // Define a TypeScript interface for the message object
 interface Message {
     message: string;
@@ -23,7 +25,7 @@ app.use(bodyParser.json());
 
 // Middleware for logging requests
 app.use((req: Request, res: Response, next: NextFunction) => {
-    const logEntry = `[${new Date().toISOString()}] ${req.method} ${req.url} - ${req.ip}`;
+    const logEntry = `[${getCurrentDateTime()}] ${req.method} ${req.url} - ${req.ip}`;
     logStream.write(logEntry + '\n');
     next();
 });
@@ -33,12 +35,12 @@ app.post('/send-message', (req: Request, res: Response) => {
     const { message, user } = req.body;
 
     if (!message || !user) {
-        return res.status(400).json({ error: 'Message and user are required fields.' });
+        throw new Error('Message and user are required fields.');
     }
 
     messages.push({ message, user });
 
-    const logEntry = `[${new Date().toISOString()}] Message sent by ${user}: ${message}`;
+    const logEntry = `[${getCurrentDateTime()}] Message sent by ${user}: ${message}`;
     logStream.write(logEntry + '\n');
 
     return res.status(200).json({ success: true, message: 'Message sent successfully.' });
@@ -56,7 +58,7 @@ app.get('/get-messages', (req: Request, res: Response) => {
     }
 
     // Log access to messages
-    const logEntry = `[${new Date().toISOString()}] Messages retrieved by ${req.ip}`;
+    const logEntry = `[${getCurrentDateTime()}] Messages retrieved by ${req.ip}`;
     logStream.write(logEntry + '\n');
 
     return res.status(200).json(messages);
@@ -71,9 +73,9 @@ app.get('/send-message-form', (req: Request, res: Response) => {
 // Error handling middleware
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
-    const logEntry = `[${new Date().toISOString()}] Error: ${err.message}`;
+    const logEntry = `[${getCurrentDateTime()}] Error: ${err.message}`;
     logStream.write(logEntry + '\n');
-    res.status(500).send('Something went wrong!');
+    res.status(500).send(`Something went wrong: ${err.message}`);
 });
 
 app.listen(port, () => {
