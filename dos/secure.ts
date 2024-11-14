@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import mongoose, { Schema, Document, Model } from 'mongoose';
+import rateLimit from 'express-rate-limit';
 
 const app = express();
 const port = 3000;
@@ -24,14 +25,16 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
 // Create a Mongoose model based on the schema
 const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);
 
-// Route to authenticate user (VULNERABLE TO NOSQL INJECTION)
-app.get('/userinfo', async (req: Request, res: Response) => {
-  const { id } = req.query;
+// Configure rate limiter
+const limiter = rateLimit({
+  windowMs: 5 * 1000, // 5 seconds
+  max: 1, // Limit each IP to 1 request per `windowMs`
+  message: 'Server is busy, please try again later.',
+});
 
-  // Ensure `id` is a string
-  if (typeof id !== 'string') {
-    return res.status(400).send('Invalid ID format');
-  }
+// Route to authenticate user (VULNERABLE TO NOSQL INJECTION)
+app.get('/userinfo', limiter, async (req: Request, res: Response) => {
+  const { id } = req.query;
 
   try {
     // Perform database query using sanitized ID
