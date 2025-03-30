@@ -1,2 +1,6 @@
 - Briefly explain the vulnerability and why the secure version is better at preventing repudiation than the insecure version.
 - What additional security mechanisms can you incorporate to prevent such attacks?
+
+The vulnerability is that it lacks logging, so it is a vulnerability of repudiation. In the secure example, it has a middleware for logging requests, and every route also writes into server.log. The design pattern is chain of responsibility. It uses middlewares to sequentially process and pass the job to the next middleware or route.
+
+Additional security mechanisms include user authentication for retrieving messages. We can also sanitize user input to prevent log from being destroyed.
