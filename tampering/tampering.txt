@@ -1,3 +1,3 @@
-The main vulnerability is that it does not sanitize user input, so attackers can inject runnable code through input. 
+The main vulnerability is that it does not sanitize user input, so attackers can inject runnable code through input to exploit the program. 
 
 In the secure example, user input is sanitized by the function escapeHTML, so the secure example prevents XSS attacks.
