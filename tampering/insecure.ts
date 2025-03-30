@@ -9,7 +9,7 @@ const secret: string = process.argv[2];
 app.use(express.urlencoded({ extended: false }));
 
 // Extend the SessionData interface to include custom session properties
-declare module 'express-session' {
+declare module "express-session" {
   interface SessionData {
     user?: string;
     sensitive?: string;
@@ -20,8 +20,8 @@ app.use(
   session({
     secret: `${secret}`,
     cookie: {
-        httpOnly: true,
-        sameSite: 'strict', // Updated for stricter security
+      httpOnly: true, //
+      sameSite: "strict", // Updated for stricter security
     },
     resave: false,
     saveUninitialized: false,
@@ -29,11 +29,11 @@ app.use(
 );
 
 app.post("/sensitive", (req: Request, res: Response) => {
-  if (req.session.user === 'Admin') {
-    req.session.sensitive = 'supersecret';
-    res.send({ message: 'Operation successful' });
+  if (req.session.user === "Admin") {
+    req.session.sensitive = "supersecret";
+    res.send({ message: "Operation successful" });
   } else {
-    res.send({ message: 'Unauthorized Access' });
+    res.send({ message: "Unauthorized Access" });
   }
 });
 
@@ -60,7 +60,7 @@ app.post("/register", (req: Request, res: Response) => {
 });
 
 app.post("/forget", (req: Request, res: Response) => {
-  req.session.destroy(err => {
+  req.session.destroy((err) => {
     res.redirect("/");
   });
 });
@@ -68,3 +68,6 @@ app.post("/forget", (req: Request, res: Response) => {
 app.listen(8000, () => {
   console.log("Server is running on port 8000");
 });
+
+// does not sanitize req.body -> XSS attack
+// it is in user story that desribes the input format -> secure by design

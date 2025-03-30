@@ -1,13 +1,14 @@
-import express, { Request, Response } from 'express';
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import express, { Request, Response } from "express";
+import mongoose, { Schema, Document, Model } from "mongoose";
 
 const app = express();
 const port = 3000;
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/infodisclosure')
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Error connecting to MongoDB:', err));
+mongoose
+  .connect("mongodb://localhost:27017/infodisclosure")
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Error connecting to MongoDB:", err));
 
 // Define an interface for the User document
 interface IUser extends Document {
@@ -22,33 +23,33 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
 });
 
 // Create a Mongoose model based on the schema
-const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);
+const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);
 
 // Route to authenticate user (SECURE AGAINST NOSQL INJECTION)
-app.get('/userinfo', async (req: Request, res: Response) => {
+app.get("/userinfo", async (req: Request, res: Response) => {
   // Extract username from query parameters
   // shorthand for const username = req.query.username;
   const { username } = req.query;
 
   // Input validation: Ensure username is a string
-  if (typeof username !== 'string') {
-    return res.status(400).send('Invalid username format');
+  if (typeof username !== "string") {
+    return res.status(400).send("Invalid username format");
   }
 
   // Perform database query using sanitized username
   try {
     // Sanitize username input: Prevent NoSQL injection
-    const sanitizedUsername = username.replace(/[^\w\s]/gi, ''); // Remove non-alphanumeric characters
+    const sanitizedUsername = username.replace(/[^\w\s]/gi, ""); // Remove non-alphanumeric characters
     const user = await User.findOne({ username: sanitizedUsername }).exec();
 
     if (user) {
       res.send(`User: ${user}`);
     } else {
-      res.status(401).send('Invalid username');
+      res.status(401).send("Invalid username");
     }
   } catch (error) {
-    console.error('Error querying database:', error);
-    res.status(500).send('Internal server error');
+    console.error("Error querying database:", error);
+    res.status(500).send("Internal server error");
   }
 });
 

@@ -1,13 +1,14 @@
-import express, { Request, Response } from 'express';
-import mongoose, { Schema, Document, Model } from 'mongoose';
+import express, { Request, Response } from "express";
+import mongoose, { Schema, Document, Model } from "mongoose";
 
 const app = express();
 const port = 3000;
 
 // Connect to MongoDB
-mongoose.connect('mongodb://localhost:27017/infodisclosure')
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('Error connecting to MongoDB:', err));
+mongoose
+  .connect("mongodb://localhost:27017/infodisclosure")
+  .then(() => console.log("Connected to MongoDB"))
+  .catch((err) => console.error("Error connecting to MongoDB:", err));
 
 // Define an interface for the User document
 interface IUser extends Document {
@@ -22,10 +23,10 @@ const userSchema: Schema<IUser> = new mongoose.Schema({
 });
 
 // Create a Mongoose model based on the schema
-const User: Model<IUser> = mongoose.model<IUser>('User', userSchema);
+const User: Model<IUser> = mongoose.model<IUser>("User", userSchema);
 
 // Route to authenticate user (VULNERABLE TO NOSQL INJECTION)
-app.get('/userinfo', async (req: Request, res: Response) => {
+app.get("/userinfo", async (req: Request, res: Response) => {
   const { username } = req.query;
   console.log(username);
 
@@ -35,7 +36,7 @@ app.get('/userinfo', async (req: Request, res: Response) => {
   if (user) {
     res.send(`User: ${user}`);
   } else {
-    res.status(401).send('Invalid username or password');
+    res.status(401).send("Invalid username or password");
   }
 });
 
@@ -43,3 +44,6 @@ app.get('/userinfo', async (req: Request, res: Response) => {
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
+
+// username from req.query
+// should sanitize username

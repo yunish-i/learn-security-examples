@@ -1,0 +1,3 @@
+In the insecure example, userId is from user input, and it does not check if it is a request from real admin. So as long as attackers get admin's userId, they would be able to update role.
+
+In the secure example, it checks if the user have been logged in before, which guarantees the request is from a real user. And it also has session middle to prevent session hijacking and CSRF. It would be even better if session.secret is not hardcoded, but from an environment variable.
